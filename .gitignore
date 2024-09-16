@@ -3,6 +3,7 @@
 bin/
 dist/
 build/
+data/
 wheelhouse/
 *.egg-info/
 *.py[co]
