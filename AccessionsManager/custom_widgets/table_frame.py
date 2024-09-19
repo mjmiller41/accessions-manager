@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *  # type: ignore
 from ttkbootstrap.tableview import Tableview
-from custom_widgets.info_dialog import InfoDialog
+from .info_dialog import InfoDialog
 
 
 class TableFrame(ttk.Frame):
@@ -45,7 +45,10 @@ class TableFrame(ttk.Frame):
         row_data = dict(event.widget.item(row_id).items())
         values = row_data["values"]
         dialog = InfoDialog(
-            self, headings=self.columns, values=values, title="Record Information"
+            self,
+            headings=self.columns,
+            values=values,
+            title="Record Information",
         )
         dialog.show()
         self.wait_window(dialog)

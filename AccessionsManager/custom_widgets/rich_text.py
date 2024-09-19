@@ -1,11 +1,11 @@
 from ttkbootstrap.scrolled import ScrolledText
+import tkinter as tk
 import tkinter.font as tkFont
 
 
 class RichText(ScrolledText):
     def __init__(self, master, *args, **kwargs):
-        super().__init__(master, bootstyle="primary", *args, **kwargs)
-        self.text.configure(height=20)
+        super().__init__(master, *args, **kwargs)  # bootstyle="primary",
 
         default_font = tkFont.nametofont(self.text.cget("font"))
 
