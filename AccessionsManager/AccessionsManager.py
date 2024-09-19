@@ -24,7 +24,7 @@ from .helpers.file_io import load_data
 # def run_app() -> None:
 class AccessionsManager(ttk.Window):
     def __init__(self, title, theme, logo_path, window_size):
-        self.data_location = "data/accessions.ods"
+        self.data_location = "accessions.ods"
         super().__init__(title, theme, logo_path, window_size)
         self.hide()  # Hide window durring init
         self.workbook = load_data(self.data_location)
