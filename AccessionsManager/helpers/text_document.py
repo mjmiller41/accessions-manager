@@ -1,11 +1,13 @@
 from odf.opendocument import OpenDocument, Text
-from odf.style import PageLayout
-from odf.style import MasterPage
-from odf.style import PageLayoutProperties
-from odf.style import Style
-from odf.style import TextProperties
-from odf.style import ParagraphProperties
-from odf.style import DefaultStyle
+from odf.style import (
+    PageLayout,
+    MasterPage,
+    PageLayoutProperties,
+    Style,
+    TextProperties,
+    ParagraphProperties,
+    DefaultStyle,
+)
 
 
 HYPERLINK_PROPERTIES_ATTRIBUTES = {
@@ -31,15 +33,24 @@ class MyStyles:
         self.heading.addElement(heading_prop)
         document.automaticstyles.addElement(self.heading)
 
-        # Bold style
-        self.bold = Style(
-            name="Bold",
+        # Bold text style
+        self.bold_text = Style(
+            name="Bold_text",
+            parentstylename="Standard",
+            family="text",
+        )
+        boldprop = TextProperties(fontweight="bold")
+        self.bold_text.addElement(boldprop)
+        # Bold paragraph style
+        document.automaticstyles.addElement(self.bold_text)
+        self.bold_paragraph = Style(
+            name="Bold_paragraph",
             parentstylename="Standard",
             family="paragraph",
         )
         boldprop = TextProperties(fontweight="bold")
-        self.bold.addElement(boldprop)
-        document.automaticstyles.addElement(self.bold)
+        self.bold_paragraph.addElement(boldprop)
+        document.automaticstyles.addElement(self.bold_paragraph)
 
         # Centered Text Style
         self.centered = Style(
@@ -74,6 +85,10 @@ class TextDocument(OpenDocument):
         # self.document = OpenDocumentText()
         self.text = Text()
         self.body.addElement(self.text)
+        self.page_orientation = page_orientation
+        self.margins = margins
+        self.page_width = "8.5in"
+        self.page_height = "11in"
 
         # Default Text Syle
         default_style = DefaultStyle(family="paragraph")
@@ -87,44 +102,49 @@ class TextDocument(OpenDocument):
 
         # Page Layout
         page_layout_style = PageLayout(name="pagelayoutstyle")
+        if self.page_orientation == "landscape":
+            self.page_width = "11in"
+            self.page_height = "8.5in"
         page_layout_style.addElement(
             PageLayoutProperties(
-                pagewidth="11in",
-                pageheight="8.5in",
-                printorientation=page_orientation,
-                margintop=margins,
-                marginleft=margins,
-                marginbottom=margins,
-                marginright=margins,
+                pagewidth=self.page_width,
+                pageheight=self.page_height,
+                printorientation=self.page_orientation,
+                margintop=self.margins,
+                marginleft=self.margins,
+                marginbottom=self.margins,
+                marginright=self.margins,
                 numformat="1",
                 writingmode="lr-tb",
             )
         )
         self.automaticstyles.addElement(page_layout_style)
+
         # Master Page
         master_page = MasterPage(name="Standard", pagelayoutname=page_layout_style)
         self.masterstyles.addElement(master_page)
 
-        # # Footer
-        # footer = Footer()
-        # footer_paragraph = P()
-        # footer_paragraph.addElement(PageNumber(text="1"))
-        # footer.addElement(footer_paragraph)
-        # master_page.addElement(footer)
+    # def set_footer(self):
+    #     # Footer
+    #     footer = Footer()
+    #     footer_paragraph = P()
+    #     footer_paragraph.addElement(PageNumber(text="1"))
+    #     footer.addElement(footer_paragraph)
+    #     master_page.addElement(footer)
 
-        # # Header
-        # header = Header()
-        # header_paragraph = P(text="Training name", stylename=styles.centered)
-        # header.addElement(header_paragraph)
-        # master_page.addElement(header)
-        # # Body
-        # self.document.text.addElement(  # type: ignore
-        #     P(text="Test text goes here", stylename=styles.plain_text)
-        # )
+    # # Header
+    # header = Header()
+    # header_paragraph = P(text="Training name", stylename=styles.centered)
+    # header.addElement(header_paragraph)
+    # master_page.addElement(header)
+    # # Body
+    # self.document.text.addElement(  # type: ignore
+    #     P(text="Test text goes here", stylename=styles.plain_text)
+    # )
 
-        # span = Span(text="hyperlink", stylename=styles.hyperlink)
-        # hyperlink = A(href="https://www.cnn.com")
-        # hyperlink.addElement(span)
-        # paragraph = P()
-        # paragraph.addElement(hyperlink)
-        # self.document.text.addElement(paragraph)  # type: ignore
+    # span = Span(text="hyperlink", stylename=styles.hyperlink)
+    # hyperlink = A(href="https://www.cnn.com")
+    # hyperlink.addElement(span)
+    # paragraph = P()
+    # paragraph.addElement(hyperlink)
+    # self.document.text.addElement(paragraph)  # type: ignore

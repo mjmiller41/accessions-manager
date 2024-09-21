@@ -14,7 +14,7 @@ from .text_document import TextDocument, MyStyles
 
 
 def create_info_odt(item_info: zip) -> OpenDocument:
-    textdoc = TextDocument()
+    textdoc = TextDocument(page_orientation="portrait")
     styles = MyStyles(textdoc)
 
     # Text
@@ -22,7 +22,7 @@ def create_info_odt(item_info: zip) -> OpenDocument:
     textdoc.text.addElement(h)  # type: ignore
     for item in item_info:
         p = P()
-        heading = Span(text=f"{item[0]}: ", stylename=styles.bold)
+        heading = Span(text=f"{item[0]}: ", stylename=styles.bold_text)
         p.addElement(heading)
         info = Span(text=f"{item[1]}\n")
         p.addElement(info)
@@ -81,8 +81,8 @@ def create_rows_odt(
     for heading in columns:
         tc = TableCell(stylename="table_header_cell_style")
         tr.addElement(tc)
-        h = H(stylename=styles.bold, text=heading, outlinelevel=1)
-        tc.addElement(h)
+        p = P(stylename=styles.bold_paragraph, text=heading)
+        tc.addElement(p)
     th.addElement(tr)
     table.addElement(th)
 

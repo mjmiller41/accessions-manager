@@ -1,10 +1,5 @@
 #!.venv/bin/python3.12
 # coding=utf-8
-"""App to manage accessions data for museums
-
-Returns:
-    None: Creates GUI application
-"""
 import ttkbootstrap as ttk
 import ttkbootstrap.utility as tkutil
 from ttkbootstrap.constants import *  # type: ignore
