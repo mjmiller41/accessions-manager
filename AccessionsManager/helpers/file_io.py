@@ -1,4 +1,4 @@
-import pandas as pd
+from pandas import ExcelFile, DataFrame, read_excel
 from odf.opendocument import OpenDocument
 import win32api, win32print
 from datetime import datetime
@@ -7,23 +7,32 @@ import tempfile
 import os
 
 
-def load_data(data_location: str) -> dict[str, pd.DataFrame]:
-    """Load spreadsheet data from file into pandas dataframe
-
-    Returns:
-        dict[str, pd.DataFrame]: Dictionary of sheet name keys and sheet data as dataframe
-    """
-    path = os.path.abspath(data_location)
-    excel_data: dict[str, pd.DataFrame] = pd.read_excel(
-        path, sheet_name=None, engine="odf", keep_default_na=False, parse_dates=False
+def clean_data_in_df(dataframe: DataFrame) -> DataFrame:
+    new_df: DataFrame
+    new_df = dataframe.map(lambda x: x.strip() if isinstance(x, str) else x)
+    new_df = dataframe.map(
+        lambda x: x.strftime("%d/%m/%Y") if isinstance(x, datetime) else x
     )
-    workbook: dict[str, pd.DataFrame] = {}
-    for name, data_df in excel_data.items():
-        workbook[name] = data_df.map(lambda x: x.strip() if isinstance(x, str) else x)
-        workbook[name] = data_df.map(
-            lambda x: x.strftime("%d/%m/%Y") if isinstance(x, datetime) else x
-        )
-        workbook[name].columns = [str(x).title() for x in data_df.columns]
+    new_df.columns = [str(x).title() for x in dataframe.columns]
+    return new_df
+
+
+def load_data(data_location: str) -> DataFrame | dict[str, DataFrame]:
+    workbook: DataFrame | dict[str, DataFrame] = {}
+    path = os.path.abspath(data_location)
+    file = ExcelFile(path, engine="odf")
+    sheet_names = file.sheet_names
+    excel_data: DataFrame | dict[str, DataFrame] = file.parse(
+        sheet_name=None,
+        keep_default_na=False,
+    )  # type: ignore
+    if isinstance(excel_data, DataFrame):
+        workbook = clean_data_in_df(excel_data)
+        workbook.name = sheet_names[0]  # type: ignore
+    else:
+        for name, data_df in excel_data.items():
+            workbook[name] = clean_data_in_df((data_df))
+            workbook[name].name = name
     return workbook
 
 
